@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitar Cotización - FELMART</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .form-container {
+            padding: 40px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .required {
+            color: #e74c3c;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .tipo-solicitud {
+            display: none;
+        }
+        
+        .tipo-solicitud.show {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚛 FELMART</h1>
+            <p>Solicita tu cotización de retiro de residuos</p>
+        </div>
+        
+        <div class="form-container">
+            <div id="successMessage" class="success-message" style="display: none;">
+                <h3>✅ ¡Solicitud enviada exitosamente!</h3>
+                <p>Tu número de solicitud es: <strong id="numeroSolicitud"></strong></p>
+                <p>Te contactaremos pronto para coordinar tu cotización.</p>
+            </div>
+            
+            <div id="errorMessage" class="error-message" style="display: none;">
+                <h3>❌ Error al enviar solicitud</h3>
+                <p id="errorText"></p>
+            </div>
+            
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Enviando solicitud...</p>
+            </div>
+            
+            <form id="solicitudForm">
+                <div class="form-group">
+                    <label for="tipo_solicitud">Tipo de Solicitud <span class="required">*</span></label>
+                    <select id="tipo_solicitud" name="tipo_solicitud" required>
+                        <option value="">Selecciona una opción</option>
+                        <option value="usuario">Particular</option>
+                        <option value="empresa">Empresa</option>
+                    </select>
+                </div>
+                
+                <div id="empresaFields" class="tipo-solicitud">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="empresa_nombre">Nombre de la Empresa <span class="required">*</span></label>
+                            <input type="text" id="empresa_nombre" name="empresa_nombre">
+                        </div>
+                        <div class="form-group">
+                            <label for="empresa_rut">RUT de la Empresa <span class="required">*</span></label>
+                            <input type="text" id="empresa_rut" name="empresa_rut" placeholder="12.345.678-9">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="empresa_giro">Giro de la Empresa</label>
+                        <input type="text" id="empresa_giro" name="empresa_giro" placeholder="Ej: Construcción, Manufactura, etc.">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre_solicitante">Nombre Completo <span class="required">*</span></label>
+                        <input type="text" id="nombre_solicitante" name="nombre_solicitante" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input type="tel" id="telefono" name="telefono" placeholder="+56 9 1234 5678">
+                    </div>
+                    <div class="form-group">
+                        <label for="urgencia">Urgencia</label>
+                        <select id="urgencia" name="urgencia">
+                            <option value="media">Media</option>
+                            <option value="baja">Baja</option>
+                            <option value="alta">Alta</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="direccion">Dirección <span class="required">*</span></label>
+                    <input type="text" id="direccion" name="direccion" required placeholder="Calle, número, comuna">
+                </div>
+                
+                <div class="form-group">
+                    <label for="descripcion_residuos">Descripción de Residuos <span class="required">*</span></label>
+                    <textarea id="descripcion_residuos" name="descripcion_residuos" required 
+                              placeholder="Describe qué tipo de residuos necesitas retirar (ej: escombros, muebles, electrónicos, etc.)"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cantidad_estimada">Cantidad Estimada</label>
+                        <input type="text" id="cantidad_estimada" name="cantidad_estimada" 
+                               placeholder="Ej: 5 metros cúbicos, 2 camiones, etc.">
+                    </div>
+                    <div class="form-group">
+                        <label for="frecuencia_retiro">Frecuencia de Retiro</label>
+                        <select id="frecuencia_retiro" name="frecuencia_retiro">
+                            <option value="una_vez">Una vez</option>
+                            <option value="semanal">Semanal</option>
+                            <option value="quincenal">Quincenal</option>
+                            <option value="mensual">Mensual</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="frecuencia_detalle">Detalle de Frecuencia (si aplica)</label>
+                    <input type="text" id="frecuencia_detalle" name="frecuencia_detalle" 
+                           placeholder="Especifica días, horarios, etc.">
+                </div>
+                
+                <div class="form-group">
+                    <label for="observaciones">Observaciones Adicionales</label>
+                    <textarea id="observaciones" name="observaciones" 
+                              placeholder="Cualquier información adicional que consideres relevante"></textarea>
+                </div>
+                
+                <button type="submit" class="btn" id="submitBtn">
+                    📝 Enviar Solicitud de Cotización
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar/ocultar campos de empresa según tipo de solicitud
+        document.getElementById('tipo_solicitud').addEventListener('change', function() {
+            const empresaFields = document.getElementById('empresaFields');
+            const empresaNombre = document.getElementById('empresa_nombre');
+            const empresaRut = document.getElementById('empresa_rut');
+            
+            if (this.value === 'empresa') {
+                empresaFields.classList.add('show');
+                empresaNombre.required = true;
+                empresaRut.required = true;
+            } else {
+                empresaFields.classList.remove('show');
+                empresaNombre.required = false;
+                empresaRut.required = false;
+                empresaNombre.value = '';
+                empresaRut.value = '';
+            }
+        });
+
+        // Manejar envío del formulario
+        document.getElementById('solicitudForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Ocultar mensajes anteriores
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            // Mostrar loading
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            
+            try {
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Limpiar campos vacíos
+                Object.keys(data).forEach(key => {
+                    if (data[key] === '') {
+                        delete data[key];
+                    }
+                });
+                
+                const response = await fetch('/api/solicitudes-cotizacion/publica', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Mostrar mensaje de éxito
+                    document.getElementById('numeroSolicitud').textContent = result.numero_solicitud;
+                    successMessage.style.display = 'block';
+                    this.reset();
+                    
+                    // Scroll al mensaje de éxito
+                    successMessage.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    // Mostrar mensaje de error
+                    document.getElementById('errorText').textContent = result.message || 'Error desconocido';
+                    errorMessage.style.display = 'block';
+                    errorMessage.scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('errorText').textContent = 'Error de conexión. Intenta nuevamente.';
+                errorMessage.style.display = 'block';
+                errorMessage.scrollIntoView({ behavior: 'smooth' });
+            } finally {
+                // Ocultar loading
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+
+        // Formatear RUT automáticamente
+        document.getElementById('empresa_rut').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/[^0-9kK]/g, '');
+            if (value.length > 1) {
+                value = value.slice(0, -1) + '-' + value.slice(-1);
+            }
+            if (value.length > 4) {
+                value = value.slice(0, -5) + '.' + value.slice(-5);
+            }
+            if (value.length > 8) {
+                value = value.slice(0, -9) + '.' + value.slice(-9);
+            }
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>

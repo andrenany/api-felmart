@@ -1,0 +1,40 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "init-db": "node seeders/initDB.js",
+    "seed-data": "node seeders/seedData.js",
+    "seed-residuos": "node seeders/seedResiduos.js",
+    "create-admin": "node seeders/createAdmin.js",
+    "drop-db": "node seeders/dropDB.js",
+    "init-cotizaciones": "node seeders/initCotizaciones.js",
+    "init-visitas": "node seeders/initVisitasCertificados.js",
+    "update-residuos-enum": "node scripts/updateResiduosUnidadEnum.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.12.2",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "imap-simple": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mailparser": "^3.9.1",
+    "mongoose": "^8.19.1",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.15.2",
+    "nodemailer": "^7.0.12",
+    "pdfkit": "^0.17.2"
+  },
+  "overrides": {
+    "semver": "^5.7.2"
+  }
+}

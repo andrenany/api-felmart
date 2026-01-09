@@ -1,0 +1,83 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+logs/
+*.log.*
+
+# Archivos subidos por usuarios
+uploads/
+uploads/**/*
+
+# Frontend y páginas simples (excluir del repo de API)
+frontend/
+simple-page/
+
+# Builds y distribuciones
+dist/
+build/
+*.tsbuildinfo
+
+# Archivos de sistema operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Archivos temporales
+*.tmp
+*.temp
+.cache/
+.temp/
+tmp/
+temp/
+
+# Coverage y testing
+coverage/
+.nyc_output/
+*.lcov
+.jest/
+
+# Archivos de base de datos local (si existen)
+*.sqlite
+*.sqlite3
+*.db
+
+# Archivos de configuración local
+config/local.js
+config/local.json
+
+# Archivos de backup
+*.bak
+*.backup
+*~

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - FELMART</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid #3498db;
+        }
+        
+        .card.critica {
+            border-left-color: #e74c3c;
+        }
+        
+        .card.alta {
+            border-left-color: #f39c12;
+        }
+        
+        .card.media {
+            border-left-color: #3498db;
+        }
+        
+        .card.baja {
+            border-left-color: #27ae60;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .badge {
+            background: #e74c3c;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .badge.critica {
+            background: #e74c3c;
+        }
+        
+        .badge.alta {
+            background: #f39c12;
+        }
+        
+        .badge.media {
+            background: #3498db;
+        }
+        
+        .badge.baja {
+            background: #27ae60;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .notification-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #3498db;
+            transition: all 0.3s ease;
+        }
+        
+        .notification-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .notification-item.critica {
+            border-left-color: #e74c3c;
+            background: #fdf2f2;
+        }
+        
+        .notification-item.alta {
+            border-left-color: #f39c12;
+            background: #fef9e7;
+        }
+        
+        .notification-item.media {
+            border-left-color: #3498db;
+            background: #f0f8ff;
+        }
+        
+        .notification-item.baja {
+            border-left-color: #27ae60;
+            background: #f0fff4;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .notification-message {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .notification-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8em;
+            color: #95a5a6;
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        .btn-success {
+            background: #27ae60;
+        }
+        
+        .btn-success:hover {
+            background: #229954;
+        }
+        
+        .btn-warning {
+            background: #f39c12;
+        }
+        
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        .empty-state i {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .container {
+                padding: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔔 Dashboard de Notificaciones</h1>
+        <p>Panel de administración - FELMART</p>
+    </div>
+    
+    <div class="container">
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Cargando notificaciones...</p>
+        </div>
+        
+        <div id="dashboard" style="display: none;">
+            <!-- Estadísticas -->
+            <div class="stats-grid" id="statsGrid">
+                <!-- Se llena dinámicamente -->
+            </div>
+            
+            <!-- Notificaciones Críticas -->
+            <div class="card critica" id="criticasCard" style="display: none;">
+                <div class="card-header">
+                    <h3 class="card-title">🚨 Notificaciones Críticas</h3>
+                    <span class="badge critica" id="criticasCount">0</span>
+                </div>
+                <div id="criticasList">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+            
+            <!-- Notificaciones Altas -->
+            <div class="card alta" id="altasCard" style="display: none;">
+                <div class="card-header">
+                    <h3 class="card-title">⚠️ Notificaciones Altas</h3>
+                    <span class="badge alta" id="altasCount">0</span>
+                </div>
+                <div id="altasList">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+            
+            <!-- Todas las Notificaciones -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📋 Todas las Notificaciones</h3>
+                    <div>
+                        <button class="btn btn-success" onclick="marcarTodasComoLeidas()">
+                            ✅ Marcar Todas como Leídas
+                        </button>
+                        <button class="btn" onclick="cargarNotificaciones()">
+                            🔄 Actualizar
+                        </button>
+                    </div>
+                </div>
+                <div id="todasLasNotificaciones">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let adminToken = null;
+        let adminId = null;
+
+        // Obtener token del localStorage o prompt
+        function obtenerToken() {
+            adminToken = localStorage.getItem('adminToken');
+            if (!adminToken) {
+                adminToken = prompt('Ingresa tu token de administrador:');
+                if (adminToken) {
+                    localStorage.setItem('adminToken', adminToken);
+                }
+            }
+            return adminToken;
+        }
+
+        // Cargar notificaciones
+        async function cargarNotificaciones() {
+            const token = obtenerToken();
+            if (!token) {
+                alert('Token requerido para acceder al dashboard');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/notificaciones/resumen-login', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error de autenticación');
+                }
+
+                const data = await response.json();
+                adminId = data.user.id;
+                mostrarDashboard(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al cargar notificaciones. Verifica tu token.');
+                localStorage.removeItem('adminToken');
+            }
+        }
+
+        // Mostrar dashboard
+        function mostrarDashboard(data) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+
+            // Mostrar estadísticas
+            mostrarEstadisticas(data.estadisticas);
+
+            // Mostrar notificaciones críticas
+            mostrarNotificacionesCriticas(data.criticas);
+
+            // Mostrar notificaciones altas
+            mostrarNotificacionesAltas(data.altas);
+
+            // Mostrar todas las notificaciones
+            mostrarTodasLasNotificaciones(data.ultimas);
+        }
+
+        // Mostrar estadísticas
+        function mostrarEstadisticas(stats) {
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${stats.no_leidas}</div>
+                    <div class="stat-label">No Leídas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.criticas_no_leidas}</div>
+                    <div class="stat-label">Críticas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.altas_no_leidas}</div>
+                    <div class="stat-label">Altas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.solicitudes_pendientes}</div>
+                    <div class="stat-label">Solicitudes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.visitas_proximas}</div>
+                    <div class="stat-label">Visitas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.empresas_pendientes}</div>
+                    <div class="stat-label">Empresas</div>
+                </div>
+            `;
+        }
+
+        // Mostrar notificaciones críticas
+        function mostrarNotificacionesCriticas(criticas) {
+            const card = document.getElementById('criticasCard');
+            const count = document.getElementById('criticasCount');
+            const list = document.getElementById('criticasList');
+
+            if (criticas.length === 0) {
+                card.style.display = 'none';
+                return;
+            }
+
+            card.style.display = 'block';
+            count.textContent = criticas.length;
+
+            list.innerHTML = criticas.map(notif => `
+                <div class="notification-item critica">
+                    <div class="notification-title">${notif.titulo}</div>
+                    <div class="notification-message">${notif.mensaje}</div>
+                    <div class="notification-meta">
+                        <span>${new Date(notif.fecha_creacion).toLocaleString()}</span>
+                        <button class="btn btn-success" onclick="marcarComoLeida(${notif.id})">
+                            ✅ Leído
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Mostrar notificaciones altas
+        function mostrarNotificacionesAltas(altas) {
+            const card = document.getElementById('altasCard');
+            const count = document.getElementById('altasCount');
+            const list = document.getElementById('altasList');
+
+            if (altas.length === 0) {
+                card.style.display = 'none';
+                return;
+            }
+
+            card.style.display = 'block';
+            count.textContent = altas.length;
+
+            list.innerHTML = altas.map(notif => `
+                <div class="notification-item alta">
+                    <div class="notification-title">${notif.titulo}</div>
+                    <div class="notification-message">${notif.mensaje}</div>
+                    <div class="notification-meta">
+                        <span>${new Date(notif.fecha_creacion).toLocaleString()}</span>
+                        <button class="btn btn-success" onclick="marcarComoLeida(${notif.id})">
+                            ✅ Leído
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Mostrar todas las notificaciones
+        function mostrarTodasLasNotificaciones(notificaciones) {
+            const container = document.getElementById('todasLasNotificaciones');
+
+            if (notificaciones.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div>📭</div>
+                        <h3>No hay notificaciones</h3>
+                        <p>Todas las tareas están al día</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = notificaciones.map(notif => `
+                <div class="notification-item ${notif.prioridad}">
+                    <div class="notification-title">${notif.titulo}</div>
+                    <div class="notification-message">${notif.mensaje}</div>
+                    <div class="notification-meta">
+                        <span>${new Date(notif.fecha_creacion).toLocaleString()}</span>
+                        <div>
+                            <span class="badge ${notif.prioridad}">${notif.prioridad}</span>
+                            <button class="btn btn-success" onclick="marcarComoLeida(${notif.id})">
+                                ✅ Leído
+                            </button>
+                            <button class="btn btn-danger" onclick="eliminarNotificacion(${notif.id})">
+                                🗑️ Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Marcar como leída
+        async function marcarComoLeida(id) {
+            try {
+                const response = await fetch(`/api/notificaciones/${id}/leer`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    cargarNotificaciones(); // Recargar
+                } else {
+                    alert('Error al marcar como leída');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al marcar como leída');
+            }
+        }
+
+        // Marcar todas como leídas
+        async function marcarTodasComoLeidas() {
+            try {
+                const response = await fetch('/api/notificaciones/marcar-todas-leidas', {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    cargarNotificaciones(); // Recargar
+                } else {
+                    alert('Error al marcar todas como leídas');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al marcar todas como leídas');
+            }
+        }
+
+        // Eliminar notificación
+        async function eliminarNotificacion(id) {
+            if (!confirm('¿Estás seguro de eliminar esta notificación?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/notificaciones/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    cargarNotificaciones(); // Recargar
+                } else {
+                    alert('Error al eliminar notificación');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al eliminar notificación');
+            }
+        }
+
+        // Cargar al iniciar
+        document.addEventListener('DOMContentLoaded', cargarNotificaciones);
+
+        // Auto-refresh cada 5 minutos
+        setInterval(cargarNotificaciones, 5 * 60 * 1000);
+    </script>
+</body>
+</html>
